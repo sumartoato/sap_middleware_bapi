@@ -1,0 +1,17 @@
+# Optional: real SAP RFC connectivity.
+#
+# pyrfc is a C extension published by SAP that binds to the proprietary
+# "SAP NetWeaver RFC SDK". It cannot be installed with plain pip unless
+# the SDK is downloaded from the SAP Software Center (SAP S-user required)
+# and its libraries/headers are on the system (SAPNWRFC_HOME env var).
+#
+# Install this only on hosts that will talk to a real SAP system:
+#   1. Download "SAP NW RFC SDK" for your OS from SAP Support Portal.
+#   2. Unpack it and export SAPNWRFCSDK, e.g.:
+#        export SAPNWRFC_HOME=/opt/sapnwrfcsdk
+#        export LD_LIBRARY_PATH=$SAPNWRFC_HOME/lib:$LD_LIBRARY_PATH
+#   3. pip install -r requirements-sap.txt
+#
+# Without this package installed, the middleware automatically falls back
+# to SAP_MOCK_MODE (see app/config.py) so it can still run and be tested.
+pyrfc>=3.3
