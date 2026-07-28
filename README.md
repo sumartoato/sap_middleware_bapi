@@ -61,6 +61,7 @@ API akan tersedia di `http://localhost:8000` (docs interaktif di `/docs`).
 
 ```bash
 python -m venv .venv && source .venv/bin/activate
+window .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 
 # Pastikan Postgres jalan dan DB sudah dibuat, lalu:
