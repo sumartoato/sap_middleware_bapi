@@ -119,7 +119,10 @@ docker compose down -v       # stop + hapus data Postgres
 
 **1. Siapkan PostgreSQL**
 
-Pastikan server PostgreSQL sudah berjalan, lalu buat database:
+Pastikan server PostgreSQL sudah berjalan, lalu buat database. **Aplikasi
+ini hanya membuat tabel secara otomatis — database-nya sendiri (mis.
+`sap_middleware`) harus sudah ada lebih dulu**, kalau belum akan muncul
+error `database "sap_middleware" does not exist` saat startup.
 
 ```bash
 # Linux (Debian/Ubuntu), jika Postgres belum berjalan:
@@ -129,6 +132,15 @@ sudo pg_ctlcluster 16 main start   # sesuaikan versi cluster
 sudo -u postgres psql -c "ALTER USER postgres PASSWORD 'postgres';"
 sudo -u postgres createdb sap_middleware
 ```
+
+```powershell
+# Windows, lewat "SQL Shell (psql)" atau psql yang ada di PATH
+psql -U postgres -h localhost -c "CREATE DATABASE sap_middleware;"
+```
+
+Atau lewat pgAdmin: klik kanan **Databases** → **Create** → **Database...**,
+isi nama `sap_middleware` (harus sama persis dengan `POSTGRES_DB` di
+`.env`), lalu **Save**.
 
 **2. Clone repo & buat virtual environment**
 
@@ -426,6 +438,7 @@ tetap butuh Postgres asli karena upsert memakai fitur
 | Gejala | Kemungkinan penyebab & solusi |
 |---|---|
 | `connection to server ... failed` saat start | Postgres belum jalan atau kredensial di `.env` salah. Cek `POSTGRES_HOST/PORT/USER/PASSWORD/DB`, pastikan `pg_isready` sukses. |
+| `FATAL: database "sap_middleware" does not exist` | Database belum dibuat — aplikasi hanya auto-create **tabel**, bukan database-nya. Buat dulu manual: `psql -U postgres -h localhost -c "CREATE DATABASE sap_middleware;"` (lihat [Opsi B langkah 1](#opsi-b--instalasi-lokal-tanpa-docker)), pastikan namanya sama persis dengan `POSTGRES_DB` di `.env`. |
 | `401 Unauthorized` di endpoint `/sync/*` atau `/bapi/call` | Header `X-API-Key` tidak dikirim atau nilainya tidak sama dengan `API_KEY` di `.env`. |
 | `ModuleNotFoundError: pyrfc` | Wajar jika `SAP_MOCK_MODE=false` tapi belum `pip install -r requirements-sap.txt` dan SAP NW RFC SDK belum terpasang. Untuk mode mock, dependency ini memang tidak dipasang. |
 | `records_synced` selalu 0 padahal SAP punya data | Pastikan `SAP_MOCK_MODE=false` untuk data SAP asli (mode mock hanya mengembalikan data contoh tetap); cek juga `sync_logs.message` untuk pesan error BAPI. |
